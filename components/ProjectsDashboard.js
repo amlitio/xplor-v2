@@ -63,7 +63,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
         <span style={{
           fontSize: 15, fontWeight: 700,
           fontFamily: "'Space Grotesk', sans-serif",
-        }}>PDF Explorer</span>
+        }}>File Xplor</span>
 
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

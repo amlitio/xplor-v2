@@ -1,4 +1,4 @@
-# PDF Explorer — Interactive Knowledge Graphs from PDFs
+# File Xplor — Interactive Knowledge Graphs from PDFs
 
 Upload PDFs → AI extracts entities & relationships → Interactive knowledge graph with user accounts.
 
@@ -7,7 +7,7 @@ Upload PDFs → AI extracts entities & relationships → Interactive knowledge g
 ### 1. Firebase Project
 
 1. Go to [console.firebase.google.com](https://console.firebase.google.com)
-2. **Add Project** → name it `pdf-explorer` → Create
+2. **Add Project** → name it `file-xplor` → Create
 3. **Authentication** → Get Started → Enable **Email/Password** and **Google**
 4. **Firestore Database** → Create Database → Start in **production mode** → Choose region
 5. **Firestore Rules** tab → paste contents of `firestore.rules` → Publish
@@ -25,9 +25,9 @@ cp .env.local.example .env.local
 ANTHROPIC_API_KEY=sk-ant-your-key-here
 
 NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSy...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=pdf-explorer-xxxxx.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=pdf-explorer-xxxxx
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=pdf-explorer-xxxxx.appspot.com
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=file-xplor-xxxxx.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=file-xplor-xxxxx
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=file-xplor-xxxxx.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef
 ```

@@ -409,7 +409,7 @@ export default function Explorer({ data, onBack }) {
       <div style={{ width: sidebarCollapsed ? 56 : 200, background: "rgba(255,255,255,0.02)", borderRight: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", transition: "width 0.3s ease", flexShrink: 0, overflow: "hidden" }}>
         <div onClick={() => setSidebarCollapsed(!sidebarCollapsed)} style={{ padding: sidebarCollapsed ? "16px 8px" : "16px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
           <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg, #FF6B6B, #4ECDC4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#000", flexShrink: 0 }}>◆</div>
-          {!sidebarCollapsed && <span style={{ fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", fontFamily: "'Space Grotesk', sans-serif" }}>PDF Explorer</span>}
+          {!sidebarCollapsed && <span style={{ fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", fontFamily: "'Space Grotesk', sans-serif" }}>File Xplor</span>}
         </div>
         <nav style={{ padding: "12px 8px", flex: 1 }}>
           {navItems.map((item) => (

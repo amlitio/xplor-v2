@@ -197,7 +197,7 @@ export default function LandingPage({ onEnterApp }) {
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 13, fontWeight: 800, color: "#000",
           }}>◆</div>
-          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: -0.3 }}>PDF Explorer</span>
+          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: -0.3 }}>File Xplor</span>
         </div>
 
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 24 }}>
@@ -408,7 +408,7 @@ export default function LandingPage({ onEnterApp }) {
         <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
           <div {...anim("value")}>
             <div style={{ fontSize: 11, letterSpacing: 4, color: "#A78BFA", textTransform: "uppercase", marginBottom: 14, fontWeight: 600 }}>
-              Why PDF Explorer
+              Why File Xplor
             </div>
             <h2 style={{ fontSize: "clamp(24px, 3.5vw, 38px)", fontWeight: 800, margin: "0 0 20px", letterSpacing: -0.5, lineHeight: 1.15 }}>
               Stop reading. Start <span style={{ color: "#22D3EE" }}>seeing.</span>
@@ -487,7 +487,7 @@ export default function LandingPage({ onEnterApp }) {
             lineHeight: 1.7, margin: "0 0 24px",
             fontFamily: "'Newsreader', serif", fontStyle: "italic",
           }}>
-            We uploaded 47 construction contracts and PDF Explorer mapped every subcontractor relationship in minutes. It would have taken our team weeks.
+            We uploaded 47 construction contracts and File Xplor mapped every subcontractor relationship in minutes. It would have taken our team weeks.
           </p>
           <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>— Project Manager, Infrastructure Firm</div>
         </div>
@@ -558,7 +558,7 @@ export default function LandingPage({ onEnterApp }) {
             fontSize: 9, fontWeight: 800, color: "#000",
           }}>◆</div>
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>
-            © {new Date().getFullYear()} PDF Explorer
+            © {new Date().getFullYear()} File Xplor
           </span>
         </div>
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>

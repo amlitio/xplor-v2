@@ -2,7 +2,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import "./globals.css";
 
 export const metadata = {
-  title: "PDF Explorer — Interactive Knowledge Graphs",
+  title: "File Xplor — Interactive Knowledge Graphs",
   description: "Upload PDFs and AI builds interactive entity relationship maps",
 };
 

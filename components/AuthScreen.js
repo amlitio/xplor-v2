@@ -77,7 +77,7 @@ export default function AuthScreen({ onBack }) {
             background: "linear-gradient(135deg, #FF6B6B, #4ECDC4, #45B7D1)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
             fontFamily: "'Space Grotesk', sans-serif",
-          }}>PDF Explorer</h1>
+          }}>File Xplor</h1>
           <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
             {mode === "login" ? "Sign in to your account" : "Create a new account"}
           </p>
