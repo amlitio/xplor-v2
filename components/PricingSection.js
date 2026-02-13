@@ -3,12 +3,10 @@ import { useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function PricingSection({ onEnterApp, anim }) {
-  const [annual, setAnnual] = useState(true);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
   const handleProUpgrade = async () => {
-    // If not logged in, send to auth first
     if (!user) {
       onEnterApp();
       return;
@@ -22,7 +20,7 @@ export default function PricingSection({ onEnterApp, anim }) {
         body: JSON.stringify({
           userId: user.uid,
           userEmail: user.email,
-          annual,
+          annual: false,
         }),
       });
 
@@ -70,13 +68,12 @@ export default function PricingSection({ onEnterApp, anim }) {
     },
     {
       name: "Pro",
-      price: annual ? "$19" : "$24",
-      period: annual ? "/mo billed annually" : "/mo",
+      price: "$9.99",
+      period: "/mo",
       desc: "For professionals who live in documents",
       color: "#22D3EE",
       bg: "rgba(34,211,238,0.03)",
       border: "rgba(34,211,238,0.15)",
-      badge: annual ? "SAVE 20%" : null,
       cta: loading ? "Redirecting..." : "Start 7-Day Free Trial",
       ctaBg: "linear-gradient(135deg, #22D3EE, #A78BFA)",
       ctaColor: "#000",
@@ -122,34 +119,11 @@ export default function PricingSection({ onEnterApp, anim }) {
           </h2>
           <p style={{
             fontSize: 15, color: "rgba(255,255,255,0.4)", maxWidth: 440,
-            margin: "0 auto 24px", lineHeight: 1.6,
+            margin: "0 auto", lineHeight: 1.6,
             fontFamily: "'Newsreader', serif", fontStyle: "italic",
           }}>
             Try everything with the free plan. Upgrade when you need more power.
           </p>
-
-          {/* Toggle */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 12,
-            padding: "4px", borderRadius: 10,
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}>
-            <button onClick={() => setAnnual(false)} style={{
-              padding: "8px 18px", borderRadius: 8, border: "none",
-              background: !annual ? "rgba(255,255,255,0.1)" : "transparent",
-              color: !annual ? "#fff" : "rgba(255,255,255,0.4)",
-              fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-              transition: "all 0.2s",
-            }}>Monthly</button>
-            <button onClick={() => setAnnual(true)} style={{
-              padding: "8px 18px", borderRadius: 8, border: "none",
-              background: annual ? "rgba(34,211,238,0.12)" : "transparent",
-              color: annual ? "#22D3EE" : "rgba(255,255,255,0.4)",
-              fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-              transition: "all 0.2s",
-            }}>Annual</button>
-          </div>
         </div>
 
         {/* Plan Cards */}
@@ -191,14 +165,6 @@ export default function PricingSection({ onEnterApp, anim }) {
                 <span style={{ fontSize: 42, fontWeight: 800, color: "#fff", letterSpacing: -2 }}>{plan.price}</span>
                 <span style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>{plan.period}</span>
               </div>
-
-              {plan.badge && (
-                <div style={{
-                  display: "inline-block", padding: "3px 8px", borderRadius: 6,
-                  background: "rgba(52,211,153,0.12)", color: "#34D399",
-                  fontSize: 10, fontWeight: 700, marginBottom: 12,
-                }}>{plan.badge}</div>
-              )}
 
               <p style={{
                 fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "8px 0 24px",

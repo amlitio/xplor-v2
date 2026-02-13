@@ -77,7 +77,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
           }}>PRO</div>
         ) : (
           <button
-            onClick={() => handleUpgrade(true)}
+            onClick={() => handleUpgrade(false)}
             style={{
               padding: "6px 14px", borderRadius: 8,
               border: "1px solid rgba(34,211,238,0.3)",
@@ -151,7 +151,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
         {/* Pro upgrade banner for free users */}
         {!isPro && !proLoading && (
           <div
-            onClick={() => handleUpgrade(true)}
+            onClick={() => handleUpgrade(false)}
             style={{
               padding: "16px 20px", borderRadius: 12, marginBottom: 24,
               background: "linear-gradient(135deg, rgba(34,211,238,0.06), rgba(167,139,250,0.06))",
@@ -168,7 +168,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
                 Unlock File Xplor Pro
               </div>
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
-                Unlimited analyses, AI document chat, multi-doc merging, exports & more — $19/mo
+                Unlimited analyses, AI document chat, multi-doc merging, exports & more — $9.99/mo
               </div>
             </div>
             <span style={{
