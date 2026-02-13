@@ -10,6 +10,7 @@
   "dependencies": {
     "@stripe/stripe-js": "^8.7.0",
     "firebase": "^10.12.0",
+    "firebase-admin": "^13.6.1",
     "next": "^16.1.6",
     "pdfjs-dist": "^5.4.624",
     "react": "^18.2.0",
