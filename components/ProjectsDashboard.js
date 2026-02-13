@@ -6,7 +6,7 @@ import { useProStatus } from "@/lib/useProStatus";
 
 export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
   const { user } = useAuth();
-  const { isPro, loading: proLoading, handleUpgrade } = useProStatus();
+  const { isPro, loading: proLoading, handleUpgrade, handleManageSubscription } = useProStatus();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -67,17 +67,24 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
           fontFamily: "'Space Grotesk', sans-serif",
         }}>File Xplor</span>
 
-        {/* Pro badge or upgrade button */}
+        {/* Pro badge with manage, or upgrade button */}
         {isPro ? (
-          <div style={{
-            padding: "4px 10px", borderRadius: 20, fontSize: 10,
-            fontWeight: 700, letterSpacing: 0.5,
-            background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
-            color: "#000", textTransform: "uppercase",
-          }}>PRO</div>
+          <button
+            onClick={handleManageSubscription}
+            style={{
+              padding: "4px 12px", borderRadius: 20, fontSize: 10,
+              fontWeight: 700, letterSpacing: 0.5, border: "none",
+              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+              color: "#000", textTransform: "uppercase", cursor: "pointer",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+            title="Manage subscription"
+          >PRO {"\u2728"}</button>
         ) : (
           <button
-            onClick={() => handleUpgrade(false)}
+            onClick={() => handleUpgrade(true)}
             style={{
               padding: "6px 14px", borderRadius: 8,
               border: "1px solid rgba(34,211,238,0.3)",
@@ -108,6 +115,19 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
               {user?.displayName || user?.email}
             </span>
           </div>
+          {isPro && (
+            <button
+              onClick={handleManageSubscription}
+              style={{
+                padding: "6px 14px", borderRadius: 6,
+                border: "1px solid rgba(255,255,255,0.1)",
+                background: "transparent", color: "rgba(255,255,255,0.4)",
+                fontSize: 11, cursor: "pointer",
+              }}
+            >
+              Manage Plan
+            </button>
+          )}
           <button
             onClick={logOut}
             style={{
@@ -151,7 +171,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
         {/* Pro upgrade banner for free users */}
         {!isPro && !proLoading && (
           <div
-            onClick={() => handleUpgrade(false)}
+            onClick={() => handleUpgrade(true)}
             style={{
               padding: "16px 20px", borderRadius: 12, marginBottom: 24,
               background: "linear-gradient(135deg, rgba(34,211,238,0.06), rgba(167,139,250,0.06))",
