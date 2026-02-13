@@ -2,8 +2,20 @@
 import { useState, useRef, useCallback } from "react";
 
 async function extractTextFromPDF(file) {
-  const pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+  // Use CDN version instead of npm import to avoid Turbopack bundling issues
+  if (!window.pdfjsLib) {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("Failed to load PDF.js library"));
+      document.head.appendChild(script);
+    });
+  }
+
+  const pdfjsLib = window.pdfjsLib;
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -19,10 +31,10 @@ async function extractTextFromPDF(file) {
         }
         resolve(fullText);
       } catch (err) {
-        reject(err);
+        reject(new Error(`PDF parse error: ${err.message}`));
       }
     };
-    reader.onerror = reject;
+    reader.onerror = () => reject(new Error("Failed to read file"));
     reader.readAsArrayBuffer(file);
   });
 }
@@ -33,18 +45,30 @@ function chunkText(text, maxChars = 14000) {
   return chunks;
 }
 
-async function extractEntitiesFromText(text, fileName) {
+async function extractEntitiesFromText(text, fileName, setProgress) {
   const chunks = chunkText(text);
   let allEntities = [], allConnections = [];
 
   for (let i = 0; i < Math.min(chunks.length, 6); i++) {
+    setProgress(`Analyzing "${fileName}" with AI — chunk ${i + 1}/${Math.min(chunks.length, 6)}...`);
     try {
       const response = await fetch("/api/extract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: chunks[i], fileName, chunkIndex: i, totalChunks: Math.min(chunks.length, 6) }),
       });
+      
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        console.error(`API error for chunk ${i + 1}:`, response.status, errData);
+        continue;
+      }
+      
       const data = await response.json();
+      if (data.error) {
+        console.error(`Extraction error for chunk ${i + 1}:`, data.error);
+        continue;
+      }
       if (data.entities) allEntities.push(...data.entities);
       if (data.connections) allConnections.push(...data.connections);
     } catch (err) {
@@ -94,10 +118,15 @@ export default function UploadScreen({ onComplete }) {
       setProgress(`Extracting text from "${file.name}" (${i + 1}/${files.length})...`);
       try {
         const text = await extractTextFromPDF(file);
-        if (!text.trim()) { setProgress(`"${file.name}" appears empty, skipping...`); continue; }
+        
+        if (!text.trim()) {
+          setError(`"${file.name}" appears to have no extractable text (might be a scanned image PDF).`);
+          continue;
+        }
 
-        setProgress(`Analyzing "${file.name}" with AI (${i + 1}/${files.length})...`);
-        const { entities, connections } = await extractEntitiesFromText(text, file.name);
+        console.log(`Extracted ${text.length} chars from "${file.name}"`);
+
+        const { entities, connections } = await extractEntitiesFromText(text, file.name, setProgress);
         docMeta.push({ name: file.name, textLength: text.length, entityCount: entities.length });
 
         entities.forEach((e) => {
@@ -116,13 +145,13 @@ export default function UploadScreen({ onComplete }) {
           }
         });
       } catch (err) {
-        console.error(err);
+        console.error(`Error processing "${file.name}":`, err);
         setError(`Error processing "${file.name}": ${err.message}`);
       }
     }
 
     if (!allEntities.length) {
-      setError("No entities could be extracted. Try different PDF files.");
+      setError("No entities could be extracted. This can happen if the PDFs contain only scanned images (no selectable text) or if the AI API returned an error. Check browser console (F12) for details.");
       setProcessing(false);
       return;
     }
@@ -167,7 +196,7 @@ export default function UploadScreen({ onComplete }) {
           </div>
         )}
 
-        {error && <div style={{ color: "#FF6B6B", fontSize: 13, marginBottom: 16 }}>{error}</div>}
+        {error && <div style={{ color: "#FF6B6B", fontSize: 13, marginBottom: 16, textAlign: "left", padding: "12px 16px", background: "rgba(255,107,107,0.08)", border: "1px solid rgba(255,107,107,0.2)", borderRadius: 8 }}>{error}</div>}
         {progress && (
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 13, color: "#4ECDC4", marginBottom: 8 }}>{progress}</div>
