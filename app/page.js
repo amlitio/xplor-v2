@@ -10,20 +10,21 @@ import Explorer from "@/components/Explorer";
 
 export default function Home() {
   const { user, loading } = useAuth();
+  // auto | auth | landing | secrets | projects | upload | explorer
   const [screen, setScreen] = useState("auto");
   const [explorerData, setExplorerData] = useState(null);
 
-  // Global callbacks for navigation from anywhere
+  // Global callbacks for navigation from any component
   useEffect(() => {
     window.__showSecrets = () => setScreen("secrets");
-    window.__showLanding = () => setScreen("auto");
+    window.__showLanding = () => setScreen(user ? "landing" : "auto");
     window.__showProjects = () => setScreen("projects");
     return () => {
       delete window.__showSecrets;
       delete window.__showLanding;
       delete window.__showProjects;
     };
-  }, []);
+  }, [user]);
 
   // When user logs in, go to projects
   useEffect(() => {
@@ -53,9 +54,14 @@ export default function Home() {
     );
   }
 
-  // Secrets page
+  // Secrets page (works for both logged-in and logged-out users)
   if (screen === "secrets") {
     return <SecretsPage onBack={() => setScreen(user ? "projects" : "auto")} />;
+  }
+
+  // Landing page for logged-in users who clicked "Home"
+  if (user && screen === "landing") {
+    return <LandingPage onEnterApp={() => setScreen("projects")} />;
   }
 
   // Landing page for unauthenticated visitors
@@ -64,7 +70,7 @@ export default function Home() {
   }
 
   // Auth screen
-  if (!user && (screen === "auth" || screen !== "auto")) {
+  if (!user) {
     return (
       <>
         <div className="grid-bg" />
@@ -108,7 +114,7 @@ export default function Home() {
           setExplorerData(project);
           setScreen("explorer");
         }}
-        onGoHome={() => setScreen("auto")}
+        onGoHome={() => setScreen("landing")}
         onGoSecrets={() => setScreen("secrets")}
       />
     </>
