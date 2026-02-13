@@ -1,8 +1,45 @@
 "use client";
 import { useState } from "react";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function PricingSection({ onEnterApp, anim }) {
   const [annual, setAnnual] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+
+  const handleProUpgrade = async () => {
+    // If not logged in, send to auth first
+    if (!user) {
+      onEnterApp();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.uid,
+          userEmail: user.email,
+          annual,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Checkout error:", data.error);
+        alert("Failed to start checkout. Please try again.");
+      }
+    } catch (err) {
+      console.error("Upgrade error:", err);
+      alert("Something went wrong. Please try again.");
+    }
+    setLoading(false);
+  };
 
   const plans = [
     {
@@ -16,6 +53,7 @@ export default function PricingSection({ onEnterApp, anim }) {
       cta: "Get Started",
       ctaBg: "rgba(255,255,255,0.08)",
       ctaColor: "#fff",
+      action: onEnterApp,
       features: [
         { text: "3 analyses per month", included: true },
         { text: "Up to 2 PDFs per analysis", included: true },
@@ -39,10 +77,11 @@ export default function PricingSection({ onEnterApp, anim }) {
       bg: "rgba(34,211,238,0.03)",
       border: "rgba(34,211,238,0.15)",
       badge: annual ? "SAVE 20%" : null,
-      cta: "Start 7-Day Free Trial",
+      cta: loading ? "Redirecting..." : "Start 7-Day Free Trial",
       ctaBg: "linear-gradient(135deg, #22D3EE, #A78BFA)",
       ctaColor: "#000",
       popular: true,
+      action: handleProUpgrade,
       features: [
         { text: "Unlimited analyses", included: true, highlight: true },
         { text: "Up to 20 PDFs per analysis", included: true, highlight: true },
@@ -167,16 +206,17 @@ export default function PricingSection({ onEnterApp, anim }) {
               }}>{plan.desc}</p>
 
               {/* CTA */}
-              <button onClick={onEnterApp} style={{
+              <button onClick={plan.action} disabled={loading && plan.popular} style={{
                 width: "100%", padding: "12px 20px", borderRadius: 10,
                 border: plan.popular ? "none" : "1px solid rgba(255,255,255,0.1)",
                 background: plan.ctaBg, color: plan.ctaColor,
-                fontSize: 13, fontWeight: 700, cursor: "pointer",
+                fontSize: 13, fontWeight: 700, cursor: loading && plan.popular ? "wait" : "pointer",
                 fontFamily: "inherit", transition: "all 0.3s", marginBottom: 28,
                 boxShadow: plan.popular ? "0 4px 20px rgba(34,211,238,0.15)" : "none",
+                opacity: loading && plan.popular ? 0.7 : 1,
               }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-1px)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}>
+                onMouseEnter={(e) => { if (!loading) e.currentTarget.style.transform = "translateY(-1px)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}>
                 {plan.cta}
               </button>
 
@@ -199,7 +239,7 @@ export default function PricingSection({ onEnterApp, anim }) {
                         : "rgba(255,255,255,0.2)",
                       border: f.included ? "none" : "1px solid rgba(255,255,255,0.08)",
                     }}>
-                      {f.included ? "✓" : "—"}
+                      {f.included ? "\u2713" : "\u2014"}
                     </span>
                     <span style={{
                       fontSize: 12.5,
