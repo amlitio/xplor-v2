@@ -10,6 +10,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -45,106 +46,173 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
     });
   };
 
+  const exampleAnalyses = [
+    {
+      name: "SEC Filing Analysis",
+      desc: "10-K annual report showing entity relationships between executives, subsidiaries, and financial instruments",
+      entities: 84, connections: 156, docs: 1,
+      icon: "\ud83d\udcb0",
+    },
+    {
+      name: "Research Paper Network",
+      desc: "Cross-referencing 5 AI research papers to map authors, institutions, methods, and datasets",
+      entities: 127, connections: 203, docs: 5,
+      icon: "\ud83d\udd2c",
+    },
+    {
+      name: "Contract Review",
+      desc: "Construction contract analysis mapping parties, obligations, deadlines, and payment terms",
+      entities: 52, connections: 89, docs: 3,
+      icon: "\ud83d\udcdd",
+    },
+  ];
+
+  const quickLinks = [
+    { icon: "\ud83c\udfe0", label: "Home", desc: "Back to landing page", action: () => { window.location.href = "/"; } },
+    { icon: "\ud83d\udcd6", label: "Docs", desc: "How to use File Xplor", action: () => setShowDocs(true) },
+    { icon: "\ud83c\udf1f", label: "What's New", desc: "Latest features & updates", action: () => window.__showSecrets?.() || (window.location.href = "/#pricing") },
+    { icon: "\ud83d\udcac", label: "Support", desc: "Get help & feedback", action: () => window.open("mailto:support@filexplor.com") },
+  ];
+
   return (
     <div style={{
       minHeight: "100vh", display: "flex", flexDirection: "column",
       position: "relative", zIndex: 1,
     }}>
-      {/* Header */}
+      {/* ═══ TOP NAV BAR ═══ */}
       <div style={{
-        padding: "16px 24px",
+        padding: "12px 24px",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
         display: "flex", alignItems: "center", gap: 12,
       }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: 8,
-          background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 14, fontWeight: 800, color: "#000",
-        }}>{"\u25c6"}</div>
-        <span style={{
-          fontSize: 15, fontWeight: 700,
-          fontFamily: "'Space Grotesk', sans-serif",
-        }}>File Xplor</span>
+        {/* Logo */}
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "inherit" }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: 8,
+            background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 14, fontWeight: 800, color: "#000",
+          }}>{"\u25c6"}</div>
+          <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>File Xplor</span>
+        </a>
 
-        {/* Pro badge with manage, or upgrade button */}
-        {isPro ? (
-          <button
-            onClick={handleManageSubscription}
-            style={{
-              padding: "4px 12px", borderRadius: 20, fontSize: 10,
-              fontWeight: 700, letterSpacing: 0.5, border: "none",
-              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
-              color: "#000", textTransform: "uppercase", cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
-            title="Manage subscription"
-          >PRO {"\u2728"}</button>
-        ) : (
-          <button
-            onClick={() => handleUpgrade(true)}
-            style={{
-              padding: "6px 14px", borderRadius: 8,
-              border: "1px solid rgba(34,211,238,0.3)",
-              background: "rgba(34,211,238,0.08)",
-              color: "#22D3EE", fontSize: 11, fontWeight: 600,
-              cursor: "pointer", fontFamily: "inherit",
-              transition: "all 0.2s",
-              display: "flex", alignItems: "center", gap: 6,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(34,211,238,0.15)"; e.currentTarget.style.borderColor = "rgba(34,211,238,0.5)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(34,211,238,0.08)"; e.currentTarget.style.borderColor = "rgba(34,211,238,0.3)"; }}
-          >
-            {"\u2728"} Upgrade to Pro
-          </button>
-        )}
+        {/* Nav Links */}
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 16 }}>
+          <NavLink label="Projects" active />
+          <NavLink label="Home" onClick={() => window.location.href = "/"} />
+          <NavLink label="Pricing" onClick={() => window.location.href = "/#pricing"} />
+        </div>
 
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: "50%",
-              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 11, fontWeight: 700, color: "#000",
-            }}>
-              {(user?.displayName || user?.email || "U")[0].toUpperCase()}
-            </div>
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
-              {user?.displayName || user?.email}
-            </span>
-          </div>
-          {isPro && (
+        {/* Pro badge or upgrade */}
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
+          {isPro ? (
             <button
               onClick={handleManageSubscription}
               style={{
-                padding: "6px 14px", borderRadius: 6,
-                border: "1px solid rgba(255,255,255,0.1)",
-                background: "transparent", color: "rgba(255,255,255,0.4)",
-                fontSize: 11, cursor: "pointer",
+                padding: "5px 14px", borderRadius: 20, fontSize: 10,
+                fontWeight: 700, letterSpacing: 0.5, border: "none",
+                background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+                color: "#000", textTransform: "uppercase", cursor: "pointer",
+                transition: "all 0.2s", display: "flex", alignItems: "center", gap: 4,
               }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+              title="Manage subscription"
+            >{"\u2728"} PRO</button>
+          ) : (
+            <button
+              onClick={() => handleUpgrade(true)}
+              style={{
+                padding: "6px 14px", borderRadius: 8,
+                border: "1px solid rgba(34,211,238,0.3)",
+                background: "rgba(34,211,238,0.08)",
+                color: "#22D3EE", fontSize: 11, fontWeight: 600,
+                cursor: "pointer", fontFamily: "inherit",
+                transition: "all 0.2s",
+                display: "flex", alignItems: "center", gap: 6,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(34,211,238,0.15)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(34,211,238,0.08)"; }}
             >
-              Manage Plan
+              {"\u2728"} Upgrade to Pro
             </button>
           )}
-          <button
-            onClick={logOut}
-            style={{
-              padding: "6px 14px", borderRadius: 6,
-              border: "1px solid rgba(255,255,255,0.1)",
-              background: "transparent", color: "rgba(255,255,255,0.4)",
-              fontSize: 11, cursor: "pointer",
-            }}
-          >
-            Sign Out
-          </button>
+
+          {/* User menu */}
+          <div style={{ position: "relative" }}>
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                background: "none", border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: 8, padding: "6px 12px", cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}
+            >
+              <div style={{
+                width: 26, height: 26, borderRadius: "50%",
+                background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 11, fontWeight: 700, color: "#000",
+              }}>
+                {(user?.displayName || user?.email || "U")[0].toUpperCase()}
+              </div>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+                {user?.displayName || user?.email?.split("@")[0]}
+              </span>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", marginLeft: 2 }}>{"\u25bc"}</span>
+            </button>
+
+            {/* Dropdown menu */}
+            {showMenu && (
+              <>
+                <div onClick={() => setShowMenu(false)} style={{ position: "fixed", inset: 0, zIndex: 50 }} />
+                <div style={{
+                  position: "absolute", top: "calc(100% + 8px)", right: 0,
+                  background: "#141420", border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 12, padding: 6, minWidth: 200, zIndex: 51,
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                }}>
+                  <div style={{ padding: "10px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: 4 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>
+                      {user?.displayName || "User"}
+                    </div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
+                      {user?.email}
+                    </div>
+                    {isPro && (
+                      <div style={{
+                        display: "inline-block", marginTop: 6,
+                        padding: "2px 8px", borderRadius: 10, fontSize: 9, fontWeight: 700,
+                        background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+                        color: "#000", textTransform: "uppercase",
+                      }}>Pro Member</div>
+                    )}
+                  </div>
+
+                  <MenuButton icon={"\ud83c\udfe0"} label="Home Page" onClick={() => { setShowMenu(false); window.location.href = "/"; }} />
+                  <MenuButton icon={"\ud83d\udcca"} label="My Projects" onClick={() => setShowMenu(false)} active />
+                  {isPro ? (
+                    <MenuButton icon={"\ud83d\udcb3"} label="Manage Subscription" onClick={() => { setShowMenu(false); handleManageSubscription(); }} />
+                  ) : (
+                    <MenuButton icon={"\u2728"} label="Upgrade to Pro" onClick={() => { setShowMenu(false); handleUpgrade(true); }} highlight />
+                  )}
+                  <MenuButton icon={"\ud83d\udce7"} label="Support" onClick={() => { setShowMenu(false); window.open("mailto:support@filexplor.com"); }} />
+                  <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "4px 0" }} />
+                  <MenuButton icon={"\ud83d\udeaa"} label="Sign Out" onClick={() => { setShowMenu(false); logOut(); }} danger />
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "32px 24px", maxWidth: 960, margin: "0 auto", width: "100%" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 32 }}>
+      {/* ═══ MAIN CONTENT ═══ */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "32px 24px", maxWidth: 1000, margin: "0 auto", width: "100%" }}>
+        {/* Title row */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
           <div>
             <h2 style={{
               fontSize: 24, fontWeight: 700, margin: "0 0 4px",
@@ -152,17 +220,20 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
             }}>Your Projects</h2>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
               {projects.length} saved analysis{projects.length !== 1 ? "es" : ""}
+              {isPro && <span style={{ color: "#22D3EE", marginLeft: 8 }}>{"\u2022"} Pro</span>}
             </p>
           </div>
           <button
             onClick={onNewProject}
             style={{
-              padding: "10px 20px", borderRadius: 8,
-              border: "none",
+              padding: "10px 20px", borderRadius: 8, border: "none",
               background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
               color: "#000", fontSize: 13, fontWeight: 700,
               cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
+              transition: "all 0.2s",
             }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-1px)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
           >
             <span style={{ fontSize: 16 }}>+</span> New Analysis
           </button>
@@ -179,8 +250,8 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
               display: "flex", alignItems: "center", gap: 16,
               cursor: "pointer", transition: "all 0.2s",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(34,211,238,0.25)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(34,211,238,0.12)"; }}
+            onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(34,211,238,0.25)"}
+            onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(34,211,238,0.12)"}
           >
             <span style={{ fontSize: 24 }}>{"\ud83d\ude80"}</span>
             <div style={{ flex: 1 }}>
@@ -193,20 +264,20 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
             </div>
             <span style={{
               padding: "6px 14px", borderRadius: 8, fontSize: 11, fontWeight: 700,
-              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
-              color: "#000",
+              background: "linear-gradient(135deg, #22D3EE, #A78BFA)", color: "#000",
             }}>Upgrade</span>
           </div>
         )}
 
+        {/* ═══ USER'S PROJECTS ═══ */}
         {loading ? (
           <div style={{ textAlign: "center", padding: 60, color: "rgba(255,255,255,0.3)" }}>
             Loading projects...
           </div>
         ) : projects.length === 0 ? (
           <div style={{
-            textAlign: "center", padding: 80,
-            border: "2px dashed rgba(255,255,255,0.08)", borderRadius: 16,
+            textAlign: "center", padding: 60,
+            border: "2px dashed rgba(255,255,255,0.08)", borderRadius: 16, marginBottom: 40,
           }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>{"\ud83d\udcc4"}</div>
             <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", marginBottom: 8 }}>
@@ -231,7 +302,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 16,
+            gap: 16, marginBottom: 40,
           }}>
             {projects.map((project) => (
               <div
@@ -327,7 +398,151 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
             ))}
           </div>
         )}
+
+        {/* ═══ EXAMPLE ANALYSES ═══ */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0, fontFamily: "'Space Grotesk', sans-serif" }}>
+              Example Analyses
+            </h3>
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", fontStyle: "italic" }}>
+              — see what File Xplor can do
+            </span>
+          </div>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: 14,
+          }}>
+            {exampleAnalyses.map((ex, i) => (
+              <div key={i} style={{
+                padding: "18px 16px", borderRadius: 12,
+                background: "rgba(255,255,255,0.015)",
+                border: "1px dashed rgba(255,255,255,0.06)",
+                cursor: "default", transition: "all 0.2s",
+              }}
+                onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"}
+                onMouseLeave={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                  <span style={{ fontSize: 20 }}>{ex.icon}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{ex.name}</span>
+                </div>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", lineHeight: 1.5, margin: "0 0 10px" }}>
+                  {ex.desc}
+                </p>
+                <div style={{ display: "flex", gap: 12 }}>
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
+                    <span style={{ color: "#22D3EE" }}>{ex.entities}</span> entities
+                  </span>
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
+                    <span style={{ color: "#A78BFA" }}>{ex.connections}</span> connections
+                  </span>
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
+                    <span style={{ color: "#34D399" }}>{ex.docs}</span> docs
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══ QUICK START GUIDE ═══ */}
+        <div style={{
+          padding: "24px", borderRadius: 14,
+          background: "rgba(255,255,255,0.02)",
+          border: "1px solid rgba(255,255,255,0.05)",
+          marginBottom: 40,
+        }}>
+          <h3 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 16px", fontFamily: "'Space Grotesk', sans-serif" }}>
+            {"\ud83d\udcd6"} Quick Start Guide
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+            {[
+              { step: "1", title: "Upload PDFs", desc: "Click '+ New Analysis' and drag in your PDF documents" },
+              { step: "2", title: "AI Extracts Entities", desc: "Our AI identifies people, organizations, locations, and concepts" },
+              { step: "3", title: "Explore the Graph", desc: "Navigate the interactive network — click nodes to see details" },
+              { step: "4", title: "Save & Share", desc: "Projects auto-save to your account for future reference" },
+            ].map((s, i) => (
+              <div key={i} style={{ display: "flex", gap: 12 }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                  background: "rgba(34,211,238,0.08)", border: "1px solid rgba(34,211,238,0.15)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 12, fontWeight: 700, color: "#22D3EE",
+                }}>{s.step}</div>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", marginBottom: 2 }}>{s.title}</div>
+                  <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.35)", lineHeight: 1.45 }}>{s.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══ FOOTER ═══ */}
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          padding: "16px 0", borderTop: "1px solid rgba(255,255,255,0.04)",
+          flexWrap: "wrap", gap: 12,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <a href="/" style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textDecoration: "none" }}>Home</a>
+            <a href="/#pricing" style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textDecoration: "none" }}>Pricing</a>
+            <a href="/#how" style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textDecoration: "none" }}>How It Works</a>
+            <span
+              onClick={() => window.__showSecrets?.()}
+              style={{ fontSize: 11, color: "rgba(255,255,255,0.08)", cursor: "default", userSelect: "none", transition: "color 0.5s" }}
+              onMouseEnter={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.2)"}
+              onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.08)"}
+            >Secrets</span>
+          </div>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.15)" }}>
+            {"\u00a9"} {new Date().getFullYear()} File Xplor — Powered by GS AI
+          </span>
+        </div>
       </div>
     </div>
+  );
+}
+
+// ─── Helper Components ───
+
+function NavLink({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "6px 12px", borderRadius: 6, border: "none",
+        background: active ? "rgba(255,255,255,0.06)" : "transparent",
+        color: active ? "#fff" : "rgba(255,255,255,0.35)",
+        fontSize: 12, fontWeight: active ? 600 : 400,
+        cursor: onClick ? "pointer" : "default",
+        fontFamily: "inherit", transition: "all 0.2s",
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function MenuButton({ icon, label, onClick, active, highlight, danger }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "flex", alignItems: "center", gap: 10, width: "100%",
+        padding: "8px 12px", borderRadius: 8, border: "none",
+        background: active ? "rgba(255,255,255,0.06)" : "transparent",
+        color: danger ? "#FF6B6B" : highlight ? "#22D3EE" : "rgba(255,255,255,0.6)",
+        fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+        textAlign: "left", transition: "all 0.15s",
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.06)"}
+      onMouseLeave={(e) => e.currentTarget.style.background = active ? "rgba(255,255,255,0.06)" : "transparent"}
+    >
+      <span style={{ fontSize: 14 }}>{icon}</span>
+      {label}
+    </button>
   );
 }
