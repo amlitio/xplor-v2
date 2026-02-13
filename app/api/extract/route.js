@@ -6,18 +6,27 @@ export async function POST(request) {
   try {
     const { text, fileName, chunkIndex, totalChunks } = await request.json();
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error("ANTHROPIC_API_KEY is not set");
+    if (!text || text.trim().length < 10) {
+      console.error("Extract: Text too short or empty");
+      return NextResponse.json({ entities: [], connections: [], error: "Text too short" }, { status: 400 });
+    }
+
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      console.error("Extract: ANTHROPIC_API_KEY is not set");
       return NextResponse.json({ entities: [], connections: [], error: "API key not configured" }, { status: 500 });
     }
 
+    console.log(`Extract: Processing "${fileName}" chunk ${chunkIndex + 1}/${totalChunks} (${text.length} chars)`);
+
+    // Truncate very long text
     const truncatedText = text.slice(0, 12000);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
@@ -32,7 +41,7 @@ export async function POST(request) {
     { "source": "entity_id_1", "target": "entity_id_2", "relationship": "description of relationship", "strength": 1-5 }
   ]
 }
-Limit to 15 entities and 25 connections. Use lowercase_underscore ids. Return ONLY the JSON object.`,
+Extract the most important entities with clear relationships. Limit to 20 entities and 30 connections per chunk. Use lowercase_underscore ids.`,
         messages: [
           {
             role: "user",
@@ -43,35 +52,37 @@ Limit to 15 entities and 25 connections. Use lowercase_underscore ids. Return ON
     });
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error(`Anthropic API error (${response.status}):`, errorBody.slice(0, 300));
-      return NextResponse.json({ entities: [], connections: [], error: `API error ${response.status}` }, { status: 500 });
+      const errorText = await response.text();
+      console.error(`Extract: Anthropic API error ${response.status}: ${errorText}`);
+      return NextResponse.json(
+        { entities: [], connections: [], error: `API error: ${response.status}` },
+        { status: 500 }
+      );
     }
 
     const data = await response.json();
-
-    if (data.error) {
-      console.error("Anthropic error:", JSON.stringify(data.error));
-      return NextResponse.json({ entities: [], connections: [], error: data.error.message }, { status: 500 });
-    }
-
     const txt = data.content?.map((b) => b.text || "").join("") || "";
-    if (!txt.trim()) {
-      console.error("Empty response from API");
-      return NextResponse.json({ entities: [], connections: [] }, { status: 500 });
+
+    if (!txt) {
+      console.error("Extract: Empty response from API");
+      return NextResponse.json({ entities: [], connections: [], error: "Empty API response" }, { status: 500 });
     }
 
-    const cleaned = txt.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+    // Clean markdown fences if present
+    const cleaned = txt.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
 
+    let parsed;
     try {
-      const parsed = JSON.parse(cleaned);
-      return NextResponse.json({ entities: parsed.entities || [], connections: parsed.connections || [] });
+      parsed = JSON.parse(cleaned);
     } catch (parseErr) {
-      console.error("JSON parse failed:", cleaned.slice(0, 300));
-      return NextResponse.json({ entities: [], connections: [], error: "Parse failed" }, { status: 500 });
+      console.error("Extract: JSON parse error:", parseErr.message, "Raw:", cleaned.slice(0, 200));
+      return NextResponse.json({ entities: [], connections: [], error: "Failed to parse response" }, { status: 500 });
     }
+
+    console.log(`Extract: Success - ${parsed.entities?.length || 0} entities, ${parsed.connections?.length || 0} connections`);
+    return NextResponse.json(parsed);
   } catch (err) {
-    console.error("Extraction error:", err.message);
+    console.error("Extract: Unexpected error:", err.message, err.stack);
     return NextResponse.json({ entities: [], connections: [], error: err.message }, { status: 500 });
   }
 }
