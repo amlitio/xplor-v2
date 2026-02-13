@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import PricingSection from "./PricingSection";
 
 // ─── Animated Constellation Background ───
 function ConstellationBG() {
@@ -141,19 +142,19 @@ export default function LandingPage({ onEnterApp }) {
   }, []);
 
   const useCases = [
-    { icon: "⚖️", title: "Legal Teams", desc: "Map relationships across contracts, depositions, and case files. Find connections opposing counsel missed.", color: "#A78BFA" },
-    { icon: "🔬", title: "Researchers", desc: "Synthesize hundreds of papers into a single knowledge graph. Discover cross-disciplinary insights instantly.", color: "#34D399" },
-    { icon: "📊", title: "Business Analysts", desc: "Turn financial reports, board minutes, and strategy docs into actionable relationship maps.", color: "#22D3EE" },
-    { icon: "🏗️", title: "Construction & Engineering", desc: "Extract specs, subcontractors, and compliance requirements across project documents.", color: "#FBBF24" },
-    { icon: "📰", title: "Journalists", desc: "Connect the dots between public records, financial disclosures, and leaked documents.", color: "#F472B6" },
-    { icon: "🎓", title: "Students & Academics", desc: "Build comprehensive literature reviews and thesis maps from your entire reading list.", color: "#60A5FA" },
+    { icon: "\u2696\ufe0f", title: "Legal Teams", desc: "Map relationships across contracts, depositions, and case files. Find connections opposing counsel missed.", color: "#A78BFA" },
+    { icon: "\ud83d\udd2c", title: "Researchers", desc: "Synthesize hundreds of papers into a single knowledge graph. Discover cross-disciplinary insights instantly.", color: "#34D399" },
+    { icon: "\ud83d\udcca", title: "Business Analysts", desc: "Turn financial reports, board minutes, and strategy docs into actionable relationship maps.", color: "#22D3EE" },
+    { icon: "\ud83c\udfd7\ufe0f", title: "Construction & Engineering", desc: "Extract specs, subcontractors, and compliance requirements across project documents.", color: "#FBBF24" },
+    { icon: "\ud83d\udcf0", title: "Journalists", desc: "Connect the dots between public records, financial disclosures, and leaked documents.", color: "#F472B6" },
+    { icon: "\ud83c\udf93", title: "Students & Academics", desc: "Build comprehensive literature reviews and thesis maps from your entire reading list.", color: "#60A5FA" },
   ];
 
   const steps = [
-    { num: "01", title: "Upload Any PDF", desc: "Drag and drop reports, contracts, research papers — any document. No size limits, no formatting requirements.", icon: "📤" },
-    { num: "02", title: "AI Maps Everything", desc: "Our AI reads every page, identifying people, organizations, locations, concepts, and the hidden threads connecting them.", icon: "🧠" },
-    { num: "03", title: "Explore & Discover", desc: "Navigate an interactive force-directed graph. Click nodes, trace connections, filter by type. Find what you didn't know to look for.", icon: "🕸️" },
-    { num: "04", title: "Save & Share", desc: "Keep every analysis in your account. Generate share links for your team. Build an ever-growing knowledge base.", icon: "🔗" },
+    { num: "01", title: "Upload Any PDF", desc: "Drag and drop reports, contracts, research papers \u2014 any document. No size limits, no formatting requirements.", icon: "\ud83d\udce4" },
+    { num: "02", title: "AI Maps Everything", desc: "Our AI reads every page, identifying people, organizations, locations, concepts, and the hidden threads connecting them.", icon: "\ud83e\udde0" },
+    { num: "03", title: "Explore & Discover", desc: "Navigate an interactive force-directed graph. Click nodes, trace connections, filter by type. Find what you didn't know to look for.", icon: "\ud83d\udd78\ufe0f" },
+    { num: "04", title: "Save & Share", desc: "Keep every analysis in your account. Generate share links for your team. Build an ever-growing knowledge base.", icon: "\ud83d\udd17" },
   ];
 
   const anim = (id, delay = 0) => ({
@@ -196,13 +197,14 @@ export default function LandingPage({ onEnterApp }) {
             background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 13, fontWeight: 800, color: "#000",
-          }}>◆</div>
+          }}>{"\u25c6"}</div>
           <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: -0.3 }}>File Xplor</span>
         </div>
 
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 24 }}>
           <a href="#how" style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none", display: "none" }} className="nav-link-desktop">How it works</a>
           <a href="#use-cases" style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none", display: "none" }} className="nav-link-desktop">Use cases</a>
+          <a href="#pricing" style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", textDecoration: "none", display: "none" }} className="nav-link-desktop">Pricing</a>
           <button onClick={onEnterApp} style={{
             padding: "8px 20px", borderRadius: 8,
             background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
@@ -213,7 +215,7 @@ export default function LandingPage({ onEnterApp }) {
           }}
             onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 0 30px rgba(34,211,238,0.25)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 0 20px rgba(34,211,238,0.15)"; }}>
-            {user ? "Open App →" : "Try Free →"}
+            {user ? "Open App \u2192" : "Try Free \u2192"}
           </button>
         </div>
       </nav>
@@ -226,7 +228,6 @@ export default function LandingPage({ onEnterApp }) {
         padding: "100px max(24px, 4vw) 60px",
         position: "relative", zIndex: 2, textAlign: "center",
       }}>
-        {/* Badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           padding: "6px 14px 6px 8px", borderRadius: 24,
@@ -241,7 +242,6 @@ export default function LandingPage({ onEnterApp }) {
           <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>AI-powered document intelligence</span>
         </div>
 
-        {/* Headline */}
         <h1 style={{
           fontSize: "clamp(32px, 6.5vw, 72px)", fontWeight: 800,
           lineHeight: 1.08, margin: "0 0 20px", maxWidth: 800,
@@ -263,10 +263,9 @@ export default function LandingPage({ onEnterApp }) {
           fontFamily: "'Newsreader', serif", fontStyle: "italic",
           animation: "fadeUp 0.8s ease 0.2s both",
         }}>
-          Upload any PDF. AI extracts every person, place, organization, and concept — then reveals the hidden connections between them.
+          Upload any PDF. AI extracts every person, place, organization, and concept {"\u2014"} then reveals the hidden connections between them.
         </p>
 
-        {/* CTA Group */}
         <div style={{
           display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center",
           animation: "fadeUp 0.8s ease 0.3s both",
@@ -280,7 +279,7 @@ export default function LandingPage({ onEnterApp }) {
           }}
             onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px) scale(1.02)"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(34,211,238,0.3), 0 0 100px rgba(167,139,250,0.12)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 30px rgba(34,211,238,0.2), 0 0 80px rgba(167,139,250,0.08)"; }}>
-            Start Exploring — Free
+            Start Exploring {"\u2014"} Free
           </button>
           <a href="#how" style={{
             padding: "14px 28px", borderRadius: 12,
@@ -294,7 +293,6 @@ export default function LandingPage({ onEnterApp }) {
           </a>
         </div>
 
-        {/* Social proof */}
         <div style={{
           marginTop: 48, display: "flex", alignItems: "center", gap: 16,
           flexWrap: "wrap", justifyContent: "center",
@@ -316,7 +314,6 @@ export default function LandingPage({ onEnterApp }) {
           </span>
         </div>
 
-        {/* Scroll */}
         <div style={{
           position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
           animation: "fadeUp 0.8s ease 0.7s both",
@@ -388,9 +385,9 @@ export default function LandingPage({ onEnterApp }) {
               }}>
                 <div style={{ fontSize: 28, marginBottom: 16 }}>{step.icon}</div>
                 <div style={{
-                  fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.12)",
+                  fontWeight: 700, color: "rgba(255,255,255,0.12)",
                   position: "absolute", top: 20, right: 20, letterSpacing: -0.5,
-                  fontSize: 32, fontWeight: 800,
+                  fontSize: 32,
                 }}>{step.num}</div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, margin: "0 0 8px", color: "#fff" }}>{step.title}</h3>
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.55, margin: 0 }}>{step.desc}</p>
@@ -420,7 +417,7 @@ export default function LandingPage({ onEnterApp }) {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 20, textAlign: "left" }}>
             {[
-              { title: "See What Others Miss", desc: "AI identifies relationships between entities that span hundreds of pages apart — connections impossible to spot manually.", color: "#22D3EE" },
+              { title: "See What Others Miss", desc: "AI identifies relationships between entities that span hundreds of pages apart \u2014 connections impossible to spot manually.", color: "#22D3EE" },
               { title: "Multi-Document Intelligence", desc: "Upload 10 reports. Watch entities merge across documents, revealing cross-file patterns no human could track.", color: "#A78BFA" },
               { title: "Interactive Exploration", desc: "Not a static chart. A living, breathing network you can zoom, filter, click, and search. Every node tells a story.", color: "#34D399" },
             ].map((f, i) => (
@@ -481,7 +478,7 @@ export default function LandingPage({ onEnterApp }) {
           ...anim("testimonial").style,
           maxWidth: 600, margin: "0 auto", textAlign: "center",
         }}>
-          <div style={{ fontSize: 40, color: "rgba(255,255,255,0.06)", marginBottom: 16 }}>"</div>
+          <div style={{ fontSize: 40, color: "rgba(255,255,255,0.06)", marginBottom: 16 }}>{'"'}</div>
           <p style={{
             fontSize: "clamp(16px, 2vw, 20px)", color: "rgba(255,255,255,0.55)",
             lineHeight: 1.7, margin: "0 0 24px",
@@ -489,9 +486,12 @@ export default function LandingPage({ onEnterApp }) {
           }}>
             We uploaded 47 construction contracts and File Xplor mapped every subcontractor relationship in minutes. It would have taken our team weeks.
           </p>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>— Project Manager, Infrastructure Firm</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{"\u2014"} Project Manager, Infrastructure Firm</div>
         </div>
       </section>
+
+      {/* ══════ PRICING ══════ */}
+      <PricingSection onEnterApp={onEnterApp} anim={anim} />
 
       {/* ══════ FINAL CTA ══════ */}
       <section style={{ padding: "60px max(24px, 4vw) 100px", position: "relative", zIndex: 2 }}>
@@ -520,7 +520,7 @@ export default function LandingPage({ onEnterApp }) {
             margin: "0 0 12px", letterSpacing: -0.5, lineHeight: 1.15,
             position: "relative",
           }}>
-            Ready to see what's hiding<br />in your documents?
+            Ready to see what{"\u2019"}s hiding<br />in your documents?
           </h2>
           <p style={{
             fontSize: 14, color: "rgba(255,255,255,0.4)", margin: "0 0 28px",
@@ -537,7 +537,7 @@ export default function LandingPage({ onEnterApp }) {
           }}
             onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(34,211,238,0.3)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 30px rgba(34,211,238,0.2)"; }}>
-            Get Started Free →
+            Get Started Free {"\u2192"}
           </button>
         </div>
       </section>
@@ -556,14 +556,27 @@ export default function LandingPage({ onEnterApp }) {
             background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 9, fontWeight: 800, color: "#000",
-          }}>◆</div>
+          }}>{"\u25c6"}</div>
           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>
-            © {new Date().getFullYear()} File Xplor
+            {"\u00a9"} {new Date().getFullYear()} File Xplor
           </span>
         </div>
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>
-          Powered by GS AI
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <span
+            onClick={() => window.__showSecrets?.()}
+            style={{
+              fontSize: 10, color: "rgba(255,255,255,0.06)", cursor: "default",
+              transition: "color 0.5s", letterSpacing: 1, userSelect: "none",
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.25)"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "rgba(255,255,255,0.06)"}
+          >
+            Secrets
+          </span>
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>
+            Powered by GS AI
+          </span>
+        </div>
       </footer>
 
       <style>{`
