@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { getProjects, deleteProject, logOut } from "@/lib/firebase";
+import { useProStatus } from "@/lib/useProStatus";
 
 export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
   const { user } = useAuth();
+  const { isPro, loading: proLoading, handleUpgrade } = useProStatus();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -56,20 +58,47 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
       }}>
         <div style={{
           width: 32, height: 32, borderRadius: 8,
-          background: "linear-gradient(135deg, #FF6B6B, #4ECDC4)",
+          background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 14, fontWeight: 800, color: "#000",
-        }}>◆</div>
+        }}>{"\u25c6"}</div>
         <span style={{
           fontSize: 15, fontWeight: 700,
           fontFamily: "'Space Grotesk', sans-serif",
         }}>File Xplor</span>
 
+        {/* Pro badge or upgrade button */}
+        {isPro ? (
+          <div style={{
+            padding: "4px 10px", borderRadius: 20, fontSize: 10,
+            fontWeight: 700, letterSpacing: 0.5,
+            background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+            color: "#000", textTransform: "uppercase",
+          }}>PRO</div>
+        ) : (
+          <button
+            onClick={() => handleUpgrade(true)}
+            style={{
+              padding: "6px 14px", borderRadius: 8,
+              border: "1px solid rgba(34,211,238,0.3)",
+              background: "rgba(34,211,238,0.08)",
+              color: "#22D3EE", fontSize: 11, fontWeight: 600,
+              cursor: "pointer", fontFamily: "inherit",
+              transition: "all 0.2s",
+              display: "flex", alignItems: "center", gap: 6,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(34,211,238,0.15)"; e.currentTarget.style.borderColor = "rgba(34,211,238,0.5)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(34,211,238,0.08)"; e.currentTarget.style.borderColor = "rgba(34,211,238,0.3)"; }}
+          >
+            {"\u2728"} Upgrade to Pro
+          </button>
+        )}
+
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{
               width: 28, height: 28, borderRadius: "50%",
-              background: "linear-gradient(135deg, #4ECDC4, #45B7D1)",
+              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 11, fontWeight: 700, color: "#000",
             }}>
@@ -110,7 +139,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
             style={{
               padding: "10px 20px", borderRadius: 8,
               border: "none",
-              background: "linear-gradient(135deg, #FF6B6B, #4ECDC4)",
+              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
               color: "#000", fontSize: 13, fontWeight: 700,
               cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
             }}
@@ -118,6 +147,37 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
             <span style={{ fontSize: 16 }}>+</span> New Analysis
           </button>
         </div>
+
+        {/* Pro upgrade banner for free users */}
+        {!isPro && !proLoading && (
+          <div
+            onClick={() => handleUpgrade(true)}
+            style={{
+              padding: "16px 20px", borderRadius: 12, marginBottom: 24,
+              background: "linear-gradient(135deg, rgba(34,211,238,0.06), rgba(167,139,250,0.06))",
+              border: "1px solid rgba(34,211,238,0.12)",
+              display: "flex", alignItems: "center", gap: 16,
+              cursor: "pointer", transition: "all 0.2s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(34,211,238,0.25)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(34,211,238,0.12)"; }}
+          >
+            <span style={{ fontSize: 24 }}>{"\ud83d\ude80"}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 2 }}>
+                Unlock File Xplor Pro
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                Unlimited analyses, AI document chat, multi-doc merging, exports & more — $19/mo
+              </div>
+            </div>
+            <span style={{
+              padding: "6px 14px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+              background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
+              color: "#000",
+            }}>Upgrade</span>
+          </div>
+        )}
 
         {loading ? (
           <div style={{ textAlign: "center", padding: 60, color: "rgba(255,255,255,0.3)" }}>
@@ -128,7 +188,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
             textAlign: "center", padding: 80,
             border: "2px dashed rgba(255,255,255,0.08)", borderRadius: 16,
           }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>📄</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>{"\ud83d\udcc4"}</div>
             <div style={{ fontSize: 16, color: "rgba(255,255,255,0.5)", marginBottom: 8 }}>
               No projects yet
             </div>
@@ -188,7 +248,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
                       fontSize: 16, padding: "0 4px",
                     }}
                   >
-                    ···
+                    {"\u00b7\u00b7\u00b7"}
                   </button>
                 </div>
 
@@ -217,13 +277,13 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject }) {
 
                 <div style={{ display: "flex", gap: 16, marginBottom: 12 }}>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                    <span style={{ color: "#FF6B6B", fontWeight: 600 }}>{project.entityCount || 0}</span> entities
+                    <span style={{ color: "#22D3EE", fontWeight: 600 }}>{project.entityCount || 0}</span> entities
                   </div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                    <span style={{ color: "#4ECDC4", fontWeight: 600 }}>{project.connectionCount || 0}</span> connections
+                    <span style={{ color: "#A78BFA", fontWeight: 600 }}>{project.connectionCount || 0}</span> connections
                   </div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                    <span style={{ color: "#45B7D1", fontWeight: 600 }}>{project.documentCount || 0}</span> docs
+                    <span style={{ color: "#34D399", fontWeight: 600 }}>{project.documentCount || 0}</span> docs
                   </div>
                 </div>
 
