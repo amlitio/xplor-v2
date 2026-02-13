@@ -10,14 +10,27 @@ import Explorer from "@/components/Explorer";
 
 export default function Home() {
   const { user, loading } = useAuth();
-  const [screen, setScreen] = useState("auto"); // auto | auth | secrets | projects | upload | explorer
+  const [screen, setScreen] = useState("auto");
   const [explorerData, setExplorerData] = useState(null);
 
-  // Global callback so the hidden "Secrets" link in the footer can trigger navigation
+  // Global callbacks for navigation from anywhere
   useEffect(() => {
     window.__showSecrets = () => setScreen("secrets");
-    return () => { delete window.__showSecrets; };
+    window.__showLanding = () => setScreen("auto");
+    window.__showProjects = () => setScreen("projects");
+    return () => {
+      delete window.__showSecrets;
+      delete window.__showLanding;
+      delete window.__showProjects;
+    };
   }, []);
+
+  // When user logs in, go to projects
+  useEffect(() => {
+    if (user && (screen === "auto" || screen === "auth")) {
+      setScreen("projects");
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -33,40 +46,31 @@ export default function Home() {
             background: "linear-gradient(135deg, #22D3EE, #A78BFA)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 18, fontWeight: 900, color: "#000",
-          }}>◆</div>
+          }}>{"\u25c6"}</div>
           Loading...
         </div>
       </div>
     );
   }
 
-  // Secrets page (accessible from hidden footer link)
+  // Secrets page
   if (screen === "secrets") {
     return <SecretsPage onBack={() => setScreen(user ? "projects" : "auto")} />;
   }
 
-  // Landing page for unauthenticated users who haven't clicked "Get Started"
+  // Landing page for unauthenticated visitors
   if (!user && screen === "auto") {
-    return (
-      <LandingPage onEnterApp={() => setScreen("auth")} />
-    );
+    return <LandingPage onEnterApp={() => setScreen("auth")} />;
   }
 
   // Auth screen
-  if (!user && screen === "auth") {
+  if (!user && (screen === "auth" || screen !== "auto")) {
     return (
       <>
         <div className="grid-bg" />
         <AuthScreen />
       </>
     );
-  }
-
-  // Once logged in, redirect to projects if still on auto/auth
-  if (user && (screen === "auto" || screen === "auth")) {
-    if (screen !== "projects") {
-      setTimeout(() => setScreen("projects"), 0);
-    }
   }
 
   // Explorer view
@@ -104,6 +108,8 @@ export default function Home() {
           setExplorerData(project);
           setScreen("explorer");
         }}
+        onGoHome={() => setScreen("auto")}
+        onGoSecrets={() => setScreen("secrets")}
       />
     </>
   );
