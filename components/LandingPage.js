@@ -148,6 +148,8 @@ export default function LandingPage({ onEnterApp }) {
     { icon: "\ud83c\udfd7\ufe0f", title: "Construction & Engineering", desc: "Extract specs, subcontractors, and compliance requirements across project documents.", color: "#FBBF24" },
     { icon: "\ud83d\udcf0", title: "Journalists", desc: "Connect the dots between public records, financial disclosures, and leaked documents.", color: "#F472B6" },
     { icon: "\ud83c\udf93", title: "Students & Academics", desc: "Build comprehensive literature reviews and thesis maps from your entire reading list.", color: "#60A5FA" },
+    { icon: "\ud83e\udde9", title: "Knowledge Managers", desc: "Turn Obsidian vaults, wikis, and markdown notes into navigable intelligence graphs with quality scoring.", color: "#EE5A24" },
+    { icon: "\ud83e\udd16", title: "AI Builders", desc: "Build traversable knowledge layers for AI agents. Progressive disclosure ensures agents load only what they need.", color: "#34D399" },
   ];
 
   const steps = [
@@ -239,7 +241,7 @@ export default function LandingPage({ onEnterApp }) {
             background: "linear-gradient(135deg, #22D3EE, #A78BFA)", color: "#000",
             textTransform: "uppercase", letterSpacing: 0.5,
           }}>New</span>
-          <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>AI-powered document intelligence</span>
+          <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>AI-powered document & knowledge intelligence</span>
         </div>
 
         <h1 style={{
@@ -263,7 +265,7 @@ export default function LandingPage({ onEnterApp }) {
           fontFamily: "'Newsreader', serif", fontStyle: "italic",
           animation: "fadeUp 0.8s ease 0.2s both",
         }}>
-          Upload any PDF. AI extracts every person, place, organization, and concept {"\u2014"} then reveals the hidden connections between them.
+          Upload any PDF. AI extracts every person, place, organization, and concept {"\u2014"} then reveals the hidden connections between them. Or upload markdown knowledge bases and explore them as interactive intelligence graphs.
         </p>
 
         <div style={{
@@ -354,6 +356,72 @@ export default function LandingPage({ onEnterApp }) {
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 6, fontWeight: 500 }}>{s.label}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ══════ TWO POWERFUL MODES ══════ */}
+      <section style={{ padding: "100px max(24px, 4vw)", position: "relative", zIndex: 2 }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <div {...anim("modes-title")} style={{ ...anim("modes-title").style, textAlign: "center", marginBottom: 56 }}>
+            <div style={{ fontSize: 11, letterSpacing: 4, color: "#34D399", textTransform: "uppercase", marginBottom: 14, fontWeight: 600 }}>
+              Two Powerful Modes
+            </div>
+            <h2 style={{ fontSize: "clamp(26px, 4vw, 42px)", fontWeight: 800, margin: "0 0 16px", letterSpacing: -1, lineHeight: 1.12 }}>
+              One engine. Two ways to<br />
+              <span style={{ color: "rgba(255,255,255,0.3)" }}>transform knowledge</span>
+            </h2>
+            <p style={{ fontSize: 15, color: "rgba(255,255,255,0.4)", maxWidth: 560, margin: "0 auto", lineHeight: 1.6, fontFamily: "'Newsreader', serif" }}>
+              Whether you work with PDFs or structured markdown, Xplor turns your content into interactive, queryable knowledge graphs.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 900, margin: "0 auto" }}>
+            {/* Document Mode */}
+            <div {...anim("mode-doc", 0)} style={{
+              ...anim("mode-doc", 0).style,
+              padding: "32px 28px", borderRadius: 20,
+              background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+              position: "relative", overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, background: "radial-gradient(circle, rgba(34,211,238,0.06), transparent 70%)", pointerEvents: "none" }} />
+              <span style={{ fontSize: 36, display: "block", marginBottom: 16 }}>{"\ud83d\udcc4"}</span>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: "#22D3EE", margin: "0 0 8px" }}>Document Mode</h3>
+              <p style={{ fontSize: 11, fontWeight: 600, color: "rgba(34,211,238,0.6)", textTransform: "uppercase", letterSpacing: 2, margin: "0 0 16px" }}>PDF → Knowledge Graph</p>
+              <p style={{ fontSize: 13.5, color: "rgba(255,255,255,0.45)", lineHeight: 1.6, margin: "0 0 20px" }}>
+                Upload PDFs — contracts, research papers, financial reports, legal filings. Claude AI reads every page, extracts entities and relationships, and builds an interactive graph you can explore, search, and share.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {["AI entity extraction (people, orgs, locations, dates, concepts)", "Multi-document cross-referencing", "Interactive force-directed graph visualization", "AI chat — ask questions about your documents", "Save, share, and collaborate"].map((f, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                    <span style={{ color: "#22D3EE", flexShrink: 0, marginTop: 1 }}>{"\u2713"}</span>{f}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Skill Graph Mode */}
+            <div {...anim("mode-skill", 0.12)} style={{
+              ...anim("mode-skill", 0.12).style,
+              padding: "32px 28px", borderRadius: 20,
+              background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)",
+              position: "relative", overflow: "hidden",
+            }}>
+              <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, background: "radial-gradient(circle, rgba(238,90,36,0.06), transparent 70%)", pointerEvents: "none" }} />
+              <span style={{ fontSize: 36, display: "block", marginBottom: 16 }}>{"\ud83e\udde0"}</span>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: "#EE5A24", margin: "0 0 8px" }}>Skill Graph Mode</h3>
+              <p style={{ fontSize: 11, fontWeight: 600, color: "rgba(238,90,36,0.6)", textTransform: "uppercase", letterSpacing: 2, margin: "0 0 16px" }}>Markdown → Intelligence Graph</p>
+              <p style={{ fontSize: 13.5, color: "rgba(255,255,255,0.45)", lineHeight: 1.6, margin: "0 0 20px" }}>
+                Upload a ZIP of interconnected Markdown files with [[wikilinks]] and YAML frontmatter. Xplor parses everything client-side, builds a typed knowledge graph, and scores the quality of your knowledge base.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {["[[Wikilink]] parsing with sentence-level context", "YAML frontmatter extraction (type, domain, tags)", "Quality scoring — broken links, orphans, coverage", "Maps of Content (MOC) cluster detection", "Zero server round-trips — 100% client-side"].map((f, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                    <span style={{ color: "#EE5A24", flexShrink: 0, marginTop: 1 }}>{"\u2713"}</span>{f}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

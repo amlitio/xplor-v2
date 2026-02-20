@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { saveProject, shareProject } from "@/lib/firebase";
+import NetworkChat from "@/components/NetworkChat";
 
 const TYPE_COLORS = {
   person: { bg: "#FF6B6B", glow: "rgba(255,107,107,0.4)" },
@@ -515,6 +516,15 @@ export default function Explorer({ data, onBack }) {
           )}
         </div>
       </div>
+
+      {/* AI Chat */}
+      <NetworkChat
+        entities={entities}
+        connections={connections}
+        documents={documents}
+        selectedEntity={selectedEntity}
+        isPro={true}
+      />
     </div>
   );
 }
