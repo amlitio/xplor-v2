@@ -426,6 +426,8 @@ export default function Page() {
           <ProjectsDashboard
             onNewProject={handleNewProject}
             onOpenProject={handleOpenProject}
+            onGoHome={() => goTo(SCREENS.LANDING)}
+            onGoSecrets={() => {}}
           />
         </div>
       )}
