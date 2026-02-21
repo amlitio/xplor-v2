@@ -573,6 +573,49 @@ export default function SkillGraphUpload({ onGraphReady }) {
     if (inputRef.current) inputRef.current.value = "";
   };
 
+  // ── Pre-built example graph ────────────────────────────────────────────────
+  const handleTryExample = async () => {
+    setPhase("parsing");
+    setProgress({ step: "Loading example knowledge graph…", pct: 20 });
+    await new Promise((r) => setTimeout(r, 300));
+
+    const exampleFiles = [
+      { path: "cognitive-behavioral-therapy.md", content: `---\nname: Cognitive Behavioral Therapy\ntype: moc\ndomain: psychology\ndescription: A structured approach to treating mental health issues by changing thought patterns and behaviors\ntags: [therapy, evidence-based, structured]\n---\n# Cognitive Behavioral Therapy\n\nCBT is the gold standard of evidence-based psychotherapy. It focuses on the relationship between [[thoughts-feelings-behaviors]] and uses structured techniques to create lasting change.\n\n## Core Techniques\n- [[cognitive-restructuring]] — identifying and challenging distorted thinking\n- [[behavioral-activation]] — scheduling activities to combat depression\n- [[exposure-therapy]] — gradual confrontation of feared situations\n- [[thought-records]] — documenting and analyzing automatic thoughts\n\n## Theoretical Foundations\nCBT draws from [[becks-cognitive-model]] and integrates concepts from [[attachment-theory]] when working with relational patterns.\n\n## Applications\nEffective for [[depression]], [[anxiety-disorders]], [[ptsd]], and increasingly used in [[addiction-treatment]].` },
+      { path: "cognitive-restructuring.md", content: `---\nname: Cognitive Restructuring\ntype: technique\ndomain: psychology\ndescription: The process of identifying, challenging, and replacing distorted automatic thoughts with balanced alternatives\ntags: [technique, core, thoughts]\n---\n# Cognitive Restructuring\n\nCognitive restructuring is the cornerstone technique of [[cognitive-behavioral-therapy]]. The client learns to catch [[automatic-thoughts]], evaluate their accuracy, and develop more balanced perspectives.\n\n## Steps\n1. Identify the triggering situation\n2. Notice the [[automatic-thoughts]] that arise\n3. Recognize [[cognitive-distortions]] in those thoughts\n4. Challenge the evidence for and against\n5. Develop a balanced alternative thought\n\nThis technique is documented through [[thought-records]] and builds on [[becks-cognitive-model]].` },
+      { path: "becks-cognitive-model.md", content: `---\nname: Beck's Cognitive Model\ntype: framework\ndomain: psychology\ndescription: Aaron Beck's foundational model proposing that thoughts, feelings, and behaviors are interconnected\ntags: [framework, foundational, beck]\n---\n# Beck's Cognitive Model\n\nDeveloped by Aaron T. Beck in the 1960s, this model is the theoretical foundation of [[cognitive-behavioral-therapy]].\n\n## Core Propositions\nThe model proposes that [[thoughts-feelings-behaviors]] form an interconnected triangle. Changing any one element affects the others.\n\n## Key Concepts\n- Core beliefs — deep-level assumptions about self, others, and the world\n- Intermediate beliefs — rules and attitudes derived from core beliefs\n- [[automatic-thoughts]] — surface-level cognitions triggered by situations\n\nThis model directly informs techniques like [[cognitive-restructuring]] and [[thought-records]].` },
+      { path: "thoughts-feelings-behaviors.md", content: `---\nname: Thoughts-Feelings-Behaviors Triangle\ntype: concept\ndomain: psychology\ndescription: The CBT model showing how thoughts, feelings, and behaviors are interconnected and mutually reinforcing\ntags: [concept, core, model]\n---\n# The CBT Triangle\n\nAt the heart of [[cognitive-behavioral-therapy]] is the insight that thoughts, feelings, and behaviors form an interconnected system.\n\nA negative [[automatic-thoughts|automatic thought]] triggers negative emotions, which drive avoidance behaviors, which reinforce the original thought. [[cognitive-restructuring]] breaks this cycle by targeting the thought component.\n\nThis concept comes directly from [[becks-cognitive-model]].` },
+      { path: "automatic-thoughts.md", content: `---\nname: Automatic Thoughts\ntype: concept\ndomain: psychology\ndescription: Rapid, involuntary cognitions that arise in response to situations, often containing cognitive distortions\ntags: [concept, thoughts, distortions]\n---\n# Automatic Thoughts\n\nAutomatic thoughts are the rapid-fire interpretations our minds generate in response to events. In [[cognitive-behavioral-therapy]], learning to catch these thoughts is the first step toward change.\n\nAutomatic thoughts often contain [[cognitive-distortions]] — systematic errors in thinking like catastrophizing, black-and-white thinking, or mind reading.\n\nThey are documented using [[thought-records]] and addressed through [[cognitive-restructuring]].\n\nThe concept originates from [[becks-cognitive-model]].` },
+      { path: "cognitive-distortions.md", content: `---\nname: Cognitive Distortions\ntype: concept\ndomain: psychology\ndescription: Systematic patterns of biased thinking that lead to inaccurate conclusions about reality\ntags: [concept, distortions, thinking-errors]\n---\n# Cognitive Distortions\n\nCognitive distortions are the thinking errors that [[cognitive-behavioral-therapy]] aims to correct. They appear in [[automatic-thoughts]] and maintain psychological distress.\n\n## Common Distortions\n- **All-or-nothing thinking** — seeing things in black and white\n- **Catastrophizing** — expecting the worst possible outcome\n- **Mind reading** — assuming you know what others think\n- **Emotional reasoning** — treating feelings as facts\n- **Should statements** — rigid rules about how things must be\n\nIdentifying these patterns is central to [[cognitive-restructuring]].` },
+      { path: "thought-records.md", content: `---\nname: Thought Records\ntype: technique\ndomain: psychology\ndescription: Structured worksheets for documenting situations, automatic thoughts, emotions, and balanced alternatives\ntags: [technique, tool, documentation]\n---\n# Thought Records\n\nThought records are the practical worksheets used in [[cognitive-behavioral-therapy]] to apply [[cognitive-restructuring]] in daily life.\n\n## Columns\n1. Situation — what happened\n2. [[automatic-thoughts]] — what went through your mind\n3. Emotions — what you felt (0-100 intensity)\n4. Evidence for — facts supporting the thought\n5. Evidence against — facts contradicting it\n6. Balanced thought — a more accurate perspective\n7. Re-rate emotions\n\nThey make [[cognitive-distortions]] visible and trackable over time.` },
+      { path: "behavioral-activation.md", content: `---\nname: Behavioral Activation\ntype: technique\ndomain: psychology\ndescription: A technique that combats depression by scheduling meaningful activities to break the cycle of withdrawal\ntags: [technique, depression, activity]\n---\n# Behavioral Activation\n\nBehavioral activation is a core technique in [[cognitive-behavioral-therapy]] that targets the behavioral component of the [[thoughts-feelings-behaviors]] triangle.\n\nWhen people are depressed, they withdraw from activities. This withdrawal reduces positive reinforcement, deepening [[depression]]. Behavioral activation breaks this cycle by scheduling activities that provide mastery and pleasure.\n\nIt is often used alongside [[cognitive-restructuring]] for comprehensive treatment.` },
+      { path: "exposure-therapy.md", content: `---\nname: Exposure Therapy\ntype: technique\ndomain: psychology\ndescription: Systematic gradual exposure to feared stimuli to reduce avoidance and anxiety responses\ntags: [technique, anxiety, exposure]\n---\n# Exposure Therapy\n\nExposure therapy is used within [[cognitive-behavioral-therapy]] to treat [[anxiety-disorders]] and [[ptsd]].\n\nThe principle is simple: gradual, repeated exposure to feared situations reduces the anxiety response over time. This works because avoidance maintains anxiety — facing the fear allows the brain to learn that the situation is safe.\n\n## Types\n- In vivo (real-life) exposure\n- Imaginal exposure\n- Interoceptive exposure (body sensations)\n- Virtual reality exposure` },
+      { path: "depression.md", content: `---\nname: Depression\ntype: concept\ndomain: psychology\ndescription: A mood disorder characterized by persistent sadness, loss of interest, and cognitive distortions\ntags: [condition, mood, treatment]\n---\n# Depression\n\n[[cognitive-behavioral-therapy]] is one of the most effective treatments for depression. The CBT model of depression emphasizes how negative [[automatic-thoughts]] and [[cognitive-distortions]] maintain depressive cycles.\n\nKey treatment approaches include [[behavioral-activation]] to increase activity levels and [[cognitive-restructuring]] to challenge negative thinking patterns.` },
+      { path: "anxiety-disorders.md", content: `---\nname: Anxiety Disorders\ntype: concept\ndomain: psychology\ndescription: A group of conditions characterized by excessive worry, fear, and avoidance behaviors\ntags: [condition, anxiety, treatment]\n---\n# Anxiety Disorders\n\n[[cognitive-behavioral-therapy]] is the first-line treatment for anxiety disorders. [[exposure-therapy]] is particularly effective, helping clients gradually face feared situations.\n\n[[cognitive-restructuring]] addresses the overestimation of threat and underestimation of coping ability that characterize anxious thinking. [[automatic-thoughts]] in anxiety often involve catastrophizing and probability overestimation.` },
+      { path: "attachment-theory.md", content: `---\nname: Attachment Theory\ntype: framework\ndomain: psychology\ndescription: Bowlby's theory that early relational experiences shape internal working models of self and others\ntags: [framework, relational, development]\n---\n# Attachment Theory\n\nAttachment theory, while not originally part of [[cognitive-behavioral-therapy]], increasingly informs modern CBT practice. Early attachment experiences shape core beliefs — the deep-level cognitions described in [[becks-cognitive-model]].\n\nUnderstanding attachment patterns helps therapists identify why certain [[cognitive-distortions]] are so persistent and resistant to standard [[cognitive-restructuring]].` },
+      { path: "ptsd.md", content: `---\nname: PTSD\ntype: concept\ndomain: psychology\ndescription: Post-traumatic stress disorder — a condition caused by experiencing or witnessing traumatic events\ntags: [condition, trauma, treatment]\n---\n# PTSD\n\nTrauma-focused [[cognitive-behavioral-therapy]] is the gold standard treatment for PTSD. [[exposure-therapy]] — particularly prolonged exposure — helps process traumatic memories.\n\n[[cognitive-restructuring]] targets the distorted beliefs that develop after trauma, such as "the world is completely dangerous" or "I am permanently damaged."` },
+      { path: "addiction-treatment.md", content: `---\nname: Addiction Treatment\ntype: concept\ndomain: psychology\ndescription: CBT-based approaches to treating substance use disorders and behavioral addictions\ntags: [condition, addiction, treatment]\n---\n# Addiction Treatment\n\n[[cognitive-behavioral-therapy]] for addiction focuses on identifying triggers, challenging beliefs about substance use, and developing coping skills.\n\nKey techniques include [[cognitive-restructuring]] of permission-giving thoughts ("I deserve this") and [[behavioral-activation]] to build a rewarding substance-free lifestyle. Understanding the [[thoughts-feelings-behaviors]] cycle is essential for relapse prevention.` },
+    ];
+
+    setProgress({ step: `Parsing ${exampleFiles.length} markdown files…`, pct: 40 });
+    await new Promise((r) => setTimeout(r, 200));
+
+    setProgress({ step: "Building knowledge graph…", pct: 60 });
+    await new Promise((r) => setTimeout(r, 200));
+    const graph = await buildSkillGraph(exampleFiles);
+
+    setPhase("validating");
+    setProgress({ step: "Running quality validation…", pct: 85 });
+    await new Promise((r) => setTimeout(r, 200));
+
+    setProgress({ step: "Complete!", pct: 100 });
+    setPhase("done");
+    setResult({
+      graph,
+      fileName: "therapy-cbt-example.zip",
+      fileCount: exampleFiles.length,
+    });
+  };
+
   // ── Render helpers ────────────────────────────────────────────────────────
 
   const isDragging = phase === "dragging";
@@ -643,7 +686,32 @@ export default function SkillGraphUpload({ onGraphReady }) {
       )}
 
       {/* ── Format Guide ── */}
-      {phase === "idle" && <FormatGuide />}
+      {phase === "idle" && (
+        <>
+          {/* Try Example Button */}
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "0 0 12px" }}>
+              Don't have markdown files? Try a pre-built example:
+            </p>
+            <button
+              onClick={handleTryExample}
+              style={{
+                padding: "10px 24px", borderRadius: 8,
+                border: "1px solid rgba(238,90,36,0.3)",
+                background: "rgba(238,90,36,0.08)",
+                color: "#EE5A24", fontSize: 13, fontWeight: 600,
+                cursor: "pointer", fontFamily: "'Outfit', sans-serif",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(238,90,36,0.15)"; e.currentTarget.style.borderColor = "rgba(238,90,36,0.5)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(238,90,36,0.08)"; e.currentTarget.style.borderColor = "rgba(238,90,36,0.3)"; }}
+            >
+              🧠 Try Example: Therapy & CBT Knowledge Graph
+            </button>
+          </div>
+          <FormatGuide />
+        </>
+      )}
     </div>
   );
 }

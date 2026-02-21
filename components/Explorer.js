@@ -14,6 +14,35 @@ const TYPE_COLORS = {
 };
 const getColor = (type) => TYPE_COLORS[type] || { bg: "#A8A8A8", glow: "rgba(168,168,168,0.4)" };
 
+// ─── Simple Markdown to HTML ───
+function formatMarkdown(md) {
+  if (!md) return "";
+  return md
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3 style="font-size:15px;font-weight:700;color:#fff;margin:24px 0 8px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:6px">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="font-size:17px;font-weight:800;color:#4ECDC4;margin:32px 0 12px;border-bottom:1px solid rgba(78,205,196,0.15);padding-bottom:8px">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 style="font-size:22px;font-weight:800;margin:0 0 16px;background:linear-gradient(135deg,#FF6B6B,#4ECDC4);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$1</h1>')
+    // Table
+    .replace(/\|(.+)\|/g, (match) => {
+      const cells = match.split("|").filter(Boolean).map((c) => c.trim());
+      if (cells.every((c) => /^[-:]+$/.test(c))) return "";
+      const tag = match.includes("---") ? "td" : "td";
+      return `<tr>${cells.map((c) => `<${tag} style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px">${c}</${tag}>`).join("")}</tr>`;
+    })
+    .replace(/(<tr>.*<\/tr>\s*)+/g, (m) => `<table style="width:100%;border-collapse:collapse;margin:12px 0;background:rgba(255,255,255,0.02);border-radius:8px;overflow:hidden">${m}</table>`)
+    // Bold & italic
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#fff;font-weight:600">$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em style="color:rgba(255,255,255,0.6)">$1</em>')
+    // Numbered lists
+    .replace(/^(\d+)\. (.+)$/gm, '<div style="display:flex;gap:10px;margin:8px 0;align-items:flex-start"><span style="color:#FF6B6B;font-weight:700;font-size:13px;min-width:20px">$1.</span><span>$2</span></div>')
+    // Bullet lists
+    .replace(/^- (.+)$/gm, '<div style="display:flex;gap:10px;margin:6px 0;align-items:flex-start"><span style="color:#4ECDC4;font-size:8px;margin-top:5px">●</span><span>$1</span></div>')
+    // Paragraphs (double newline)
+    .replace(/\n\n/g, '<div style="margin:12px 0"></div>')
+    .replace(/\n/g, "<br/>");
+}
+
 // ─── Force Simulation Hook ───
 function useForceSimulation(nodes, edges, width, height) {
   const [positions, setPositions] = useState({});
@@ -349,6 +378,9 @@ export default function Explorer({ data, onBack }) {
   const [shareUrl, setShareUrl] = useState("");
   const [projectName, setProjectName] = useState(data.name || "");
   const [showNameInput, setShowNameInput] = useState(!data.name);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryContent, setSummaryContent] = useState(null);
+  const [summaryError, setSummaryError] = useState(null);
 
   const { entities, connections, documents } = data;
   const navItems = [
@@ -356,6 +388,7 @@ export default function Explorer({ data, onBack }) {
     { id: "network", icon: "◎", label: "Network" },
     { id: "directory", icon: "☷", label: "Directory" },
     { id: "documents", icon: "☰", label: "Documents" },
+    { id: "summary", icon: "✦", label: "Summary" },
   ];
   const legend = Object.entries(TYPE_COLORS).map(([type, color]) => {
     const count = entities.filter((e) => e.type === type).length;
@@ -401,6 +434,102 @@ export default function Explorer({ data, onBack }) {
       navigator.clipboard?.writeText(url);
     } catch (err) {
       console.error("Share failed:", err);
+    }
+  };
+
+  const handleSummarize = async () => {
+    if (summaryContent) { setActiveView("summary"); return; }
+    setSummaryLoading(true);
+    setSummaryError(null);
+    setActiveView("summary");
+
+    // Build comprehensive context from graph data
+    const types = {};
+    entities.forEach((e) => { types[e.type] = (types[e.type] || 0) + 1; });
+    const topEntities = [...entities]
+      .map((e) => ({ ...e, linkCount: connections.filter((c) => c.source === e.id || c.target === e.id).length }))
+      .sort((a, b) => b.linkCount - a.linkCount)
+      .slice(0, 30);
+    const topConnections = connections.slice(0, 50).map((c) => {
+      const src = entities.find((e) => e.id === c.source);
+      const tgt = entities.find((e) => e.id === c.target);
+      return `${src?.name || c.source} → ${tgt?.name || c.target}${c.label ? ` (${c.label})` : ""}`;
+    });
+    const docSummary = documents.map((d) => `"${d.name}" — ${(d.textLength / 1000).toFixed(1)}K chars, ${d.entityCount} entities`).join("\n");
+
+    const context = `You are an elite executive analyst. You have access to a knowledge graph extracted from documents. Your job is to produce a comprehensive, professional executive summary.
+
+GRAPH DATA:
+- Total Entities: ${entities.length}
+- Total Connections: ${connections.length}
+- Documents Analyzed: ${documents.length}
+- Entity Types: ${Object.entries(types).map(([t, c]) => `${t}: ${c}`).join(", ")}
+
+DOCUMENTS:
+${docSummary || "No document metadata available"}
+
+TOP ENTITIES (by connections):
+${topEntities.map((e, i) => `${i + 1}. ${e.name} (${e.type}) — ${e.linkCount} connections${e.description ? `: ${e.description}` : ""}`).join("\n")}
+
+KEY RELATIONSHIPS:
+${topConnections.join("\n")}
+
+ALL ENTITIES:
+${entities.map((e) => `- ${e.name} (${e.type})${e.description ? `: ${e.description}` : ""}`).join("\n")}`;
+
+    const prompt = `Based on this knowledge graph, produce a comprehensive EXECUTIVE INTELLIGENCE SUMMARY. Structure it EXACTLY like this using markdown:
+
+# Executive Intelligence Summary
+
+## Overview
+A 2-3 sentence executive overview of what these documents/data reveal.
+
+## Key Metrics & KPIs
+Present as a table:
+| Metric | Value | Significance |
+Create 6-8 quantitative metrics derived from the graph data (entity counts, connection density, key ratios, coverage metrics, etc.)
+
+## Critical Findings
+Numbered list of 5-7 major findings. Each should be a substantive insight, not just a restatement of data. Look for patterns, clusters, and anomalies.
+
+## Network Analysis
+- Who/what are the most central nodes and why that matters
+- Which clusters or communities exist in the data
+- What are the strongest relationship patterns
+
+## Risk Assessment
+Identify 3-5 potential risks, gaps, or concerns visible in the data. Be specific.
+
+## Predictions & Strategic Suggestions
+Based on the patterns in the data, provide 4-6 actionable predictions or strategic recommendations. Each should include:
+- The prediction/suggestion
+- The evidence from the graph supporting it
+- Recommended action
+
+## Data Quality Notes
+Brief assessment of graph completeness, any gaps in coverage, and confidence level.
+
+Be analytical, specific, and data-driven. Reference actual entities and relationships from the graph. This should read like a report from a top-tier consulting firm.`;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          context,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+      const result = await response.json();
+      const text = result.content?.[0]?.text || result.text || "No summary generated.";
+      setSummaryContent(text);
+    } catch (err) {
+      console.error("Summary failed:", err);
+      setSummaryError(err.message || "Failed to generate summary. Please try again.");
+    } finally {
+      setSummaryLoading(false);
     }
   };
 
@@ -477,6 +606,14 @@ export default function Explorer({ data, onBack }) {
               padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.1)",
               background: "transparent", color: "rgba(255,255,255,0.5)", fontSize: 11, cursor: "pointer",
             }}>Share</button>
+            <button onClick={handleSummarize} disabled={summaryLoading} style={{
+              padding: "6px 14px", borderRadius: 6, border: "none", fontSize: 11, fontWeight: 600, cursor: "pointer",
+              background: activeView === "summary" ? "linear-gradient(135deg, #FF6B6B, #4ECDC4)" : "rgba(255,107,107,0.12)",
+              color: activeView === "summary" ? "#000" : "#FF6B6B",
+              transition: "all 0.2s",
+            }}>
+              {summaryLoading ? "Analyzing…" : "✦ Summarize"}
+            </button>
           </div>
         </div>
 
@@ -503,6 +640,70 @@ export default function Explorer({ data, onBack }) {
               </div>
             )}
             {activeView === "dashboard" && <DashboardView entities={entities} connections={connections} documents={documents} />}
+            {activeView === "summary" && (
+              <div style={{ padding: 32, overflowY: "auto", maxHeight: "100%" }}>
+                {summaryLoading && (
+                  <div style={{ textAlign: "center", padding: "80px 20px" }}>
+                    <div style={{
+                      width: 48, height: 48, borderRadius: 12, margin: "0 auto 20px",
+                      background: "linear-gradient(135deg, rgba(255,107,107,0.15), rgba(78,205,196,0.15))",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 22, animation: "pulse 2s ease-in-out infinite",
+                    }}>✦</div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: "rgba(255,255,255,0.7)", marginBottom: 8 }}>Generating Executive Summary</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
+                      Analyzing {entities.length} entities and {connections.length} connections…
+                    </div>
+                    <style>{`@keyframes pulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }`}</style>
+                  </div>
+                )}
+                {summaryError && (
+                  <div style={{ textAlign: "center", padding: "60px 20px" }}>
+                    <div style={{ fontSize: 14, color: "#FF6B6B", marginBottom: 12 }}>⚠ {summaryError}</div>
+                    <button onClick={() => { setSummaryContent(null); handleSummarize(); }} style={{
+                      padding: "8px 20px", borderRadius: 8, border: "1px solid rgba(255,107,107,0.3)",
+                      background: "rgba(255,107,107,0.08)", color: "#FF6B6B", fontSize: 12, cursor: "pointer",
+                    }}>Try Again</button>
+                  </div>
+                )}
+                {summaryContent && (
+                  <div style={{ maxWidth: 800, margin: "0 auto" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 36, height: 36, borderRadius: 10,
+                          background: "linear-gradient(135deg, #FF6B6B, #4ECDC4)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 16, color: "#000", fontWeight: 700,
+                        }}>✦</div>
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>AI Executive Summary</div>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{entities.length} entities · {connections.length} connections · {documents.length} documents</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button onClick={() => { navigator.clipboard?.writeText(summaryContent); }} style={{
+                          padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.1)",
+                          background: "transparent", color: "rgba(255,255,255,0.5)", fontSize: 11, cursor: "pointer",
+                        }}>Copy</button>
+                        <button onClick={() => { setSummaryContent(null); handleSummarize(); }} style={{
+                          padding: "6px 14px", borderRadius: 6, border: "1px solid rgba(255,107,107,0.2)",
+                          background: "rgba(255,107,107,0.06)", color: "#FF6B6B", fontSize: 11, cursor: "pointer",
+                        }}>Regenerate</button>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 13.5, color: "rgba(255,255,255,0.75)", lineHeight: 1.75,
+                        background: "rgba(255,255,255,0.02)", borderRadius: 16,
+                        border: "1px solid rgba(255,255,255,0.06)", padding: "32px 36px",
+                      }}
+                      dangerouslySetInnerHTML={{ __html: formatMarkdown(summaryContent) }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {selectedEntity && (
