@@ -2,7 +2,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import "./globals.css";
 
 export const metadata = {
-  title: "File Xplor — Interactive Knowledge Graphs",
+  title: "Xplor — Structured Cognition Engine",
   description: "Upload PDFs and AI builds interactive entity relationship maps",
 };
 

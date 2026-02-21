@@ -44,7 +44,7 @@ export default function PricingSection({ onEnterApp, anim }) {
       name: "Free",
       price: "$0",
       period: "forever",
-      desc: "See what File Xplor can do",
+      desc: "See what Xplor can do",
       color: "rgba(255,255,255,0.5)",
       bg: "rgba(255,255,255,0.02)",
       border: "rgba(255,255,255,0.06)",

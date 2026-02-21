@@ -91,7 +91,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject, onGoHom
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 14, fontWeight: 800, color: "#000",
           }}>{"\u25c6"}</div>
-          <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>File Xplor</span>
+          <span style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>Xplor</span>
         </div>
 
         {/* Nav Links */}
@@ -199,7 +199,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject, onGoHom
                     <DropItem icon={"\u2728"} label="Upgrade to Pro" onClick={() => { setShowMenu(false); handleUpgrade(true); }} highlight />
                   )}
                   <DropItem icon={"\ud83c\udf1f"} label="What's New" onClick={() => { setShowMenu(false); if (onGoSecrets) onGoSecrets(); }} />
-                  <DropItem icon={"\ud83d\udce7"} label="Send Feedback" onClick={() => { setShowMenu(false); window.open("mailto:support@filexplor.com?subject=File Xplor Feedback"); }} />
+                  <DropItem icon={"\ud83d\udce7"} label="Send Feedback" onClick={() => { setShowMenu(false); window.open("mailto:support@xplor.app?subject=Xplor Feedback"); }} />
                   <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "4px 0" }} />
                   <DropItem icon={"\ud83d\udeaa"} label="Sign Out" onClick={() => { setShowMenu(false); logOut(); }} danger />
                 </div>
@@ -255,7 +255,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject, onGoHom
           >
             <span style={{ fontSize: 24 }}>{"\ud83d\ude80"}</span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 2 }}>Unlock File Xplor Pro</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 2 }}>Unlock Xplor Pro</div>
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
                 Unlimited analyses, AI document chat, multi-doc merging, exports & more — $9.99/mo
               </div>
@@ -352,7 +352,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject, onGoHom
               Example Analyses
             </h3>
             <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", fontStyle: "italic" }}>
-              — try one to see File Xplor in action
+              — try one to see Xplor in action
             </span>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
@@ -433,7 +433,7 @@ export default function ProjectsDashboard({ onOpenProject, onNewProject, onGoHom
             }
           </div>
           <span style={{ fontSize: 10, color: "rgba(255,255,255,0.15)" }}>
-            {"\u00a9"} {new Date().getFullYear()} File Xplor — Powered by GS AI
+            {"\u00a9"} {new Date().getFullYear()} Xplor — Powered by GS AI
           </span>
         </div>
       </div>
