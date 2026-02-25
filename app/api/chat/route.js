@@ -8,6 +8,7 @@ export async function POST(request) {
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
+      console.error("ANTHROPIC_API_KEY is not set");
       return NextResponse.json({ error: "API key not configured" }, { status: 500 });
     }
 
@@ -23,10 +24,10 @@ export async function POST(request) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20250929",
-        max_tokens: 2000,
+        model: "claude-sonnet-4-5-20250514",
+        max_tokens: 4096,
         system: context || "You are a helpful document analyst.",
-        messages: messages.map(m => ({
+        messages: messages.map((m) => ({
           role: m.role,
           content: m.content,
         })),
@@ -35,16 +36,21 @@ export async function POST(request) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Chat API error ${response.status}: ${errorText}`);
+      console.error(`Anthropic API error ${response.status}: ${errorText}`);
       return NextResponse.json({ error: `API error: ${response.status}` }, { status: 500 });
     }
 
     const data = await response.json();
-    const text = data.content?.map(b => b.text || "").join("") || "";
+    const text = data.content?.map((b) => b.text || "").join("") || "";
 
-    return NextResponse.json({ response: text });
+    // Return in both formats for compatibility
+    return NextResponse.json({
+      response: text,
+      text: text,
+      content: data.content,
+    });
   } catch (err) {
-    console.error("Chat error:", err);
+    console.error("Chat route error:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
