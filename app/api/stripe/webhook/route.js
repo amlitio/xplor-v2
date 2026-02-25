@@ -3,22 +3,18 @@ import Stripe from "stripe";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
-});
-
-// Initialize Firebase Admin (only once)
-if (!getApps().length) {
-  // For simple setup, use project ID from env
-  // For production, use a service account JSON
-  initializeApp({
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  });
-}
-
-const db = getFirestore();
-
 export async function POST(request) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+    apiVersion: "2023-10-16",
+  });
+
+  // Initialize Firebase Admin (only once)
+  if (!getApps().length) {
+    initializeApp({
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    });
+  }
+  const db = getFirestore();
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");
 

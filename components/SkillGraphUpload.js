@@ -637,41 +637,80 @@ export default function SkillGraphUpload({ onGraphReady }) {
           <span style={styles.modeBadgeIcon}>🧠</span>
           <span style={styles.modeBadgeText}>Skill Graph Mode</span>
         </div>
-        <h1 style={styles.title}>Build Your Knowledge Graph</h1>
+        <h1 style={styles.title}>Explore a Knowledge Graph</h1>
         <p style={styles.subtitle}>
-          Upload a ZIP of Markdown files with{" "}
-          <code style={styles.code}>[[wikilinks]]</code> and YAML frontmatter.
-          Xplor parses them client-side into a traversable intelligence graph.
+          See how Xplor turns connected knowledge into an interactive, explorable graph.
         </p>
       </div>
 
-      {/* ── Drop Zone ── */}
-      {!isDone && (
-        <div
-          style={{
-            ...styles.dropZone,
-            ...(isDragging ? styles.dropZoneDragging : {}),
-            ...(isError ? styles.dropZoneError : {}),
-            ...(isProcessing ? styles.dropZoneProcessing : {}),
-          }}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={() => !isProcessing && inputRef.current?.click()}
-        >
-          <input
-            ref={inputRef}
-            type="file"
-            accept=".zip"
-            style={{ display: "none" }}
-            onChange={handleFileInput}
-          />
+      {/* ── Try Example (Primary CTA) ── */}
+      {phase === "idle" && (
+        <div style={{
+          textAlign: "center", padding: "32px 24px", marginBottom: 16,
+          borderRadius: 16, background: "rgba(238,90,36,0.04)",
+          border: "1px solid rgba(238,90,36,0.12)",
+        }}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>🧠</div>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#EE5A24", margin: "0 0 8px" }}>
+            Try It Now — No Files Needed
+          </h3>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", margin: "0 0 20px", lineHeight: 1.6 }}>
+            Load a pre-built knowledge graph about Cognitive Behavioral Therapy —
+            14 interconnected topics with quality scoring, relationship mapping, and full exploration.
+          </p>
+          <button
+            onClick={handleTryExample}
+            style={{
+              padding: "12px 32px", borderRadius: 10,
+              border: "none",
+              background: "linear-gradient(135deg, #EE5A24, #FF6B6B)",
+              color: "#fff", fontSize: 14, fontWeight: 700,
+              cursor: "pointer", fontFamily: "'Outfit', sans-serif",
+              transition: "all 0.2s",
+              boxShadow: "0 4px 20px rgba(238,90,36,0.25)",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 6px 28px rgba(238,90,36,0.35)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(238,90,36,0.25)"; }}
+          >
+            Load Example Graph →
+          </button>
+        </div>
+      )}
 
-          {isProcessing ? (
-            <ProcessingState progress={progress} />
-          ) : (
-            <IdleState isDragging={isDragging} isError={isError} error={error} />
+      {/* ── Drop Zone (secondary — advanced users) ── */}
+      {!isDone && (
+        <div>
+          {phase === "idle" && (
+            <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.2)", margin: "0 0 12px" }}>
+              Or upload your own ZIP of Markdown files
+            </p>
           )}
+          <div
+            style={{
+              ...styles.dropZone,
+              ...(isDragging ? styles.dropZoneDragging : {}),
+              ...(isError ? styles.dropZoneError : {}),
+              ...(isProcessing ? styles.dropZoneProcessing : {}),
+            }}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => !isProcessing && inputRef.current?.click()}
+          >
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".zip"
+              style={{ display: "none" }}
+              onChange={handleFileInput}
+            />
+
+            {isProcessing ? (
+              <ProcessingState progress={progress} />
+            ) : (
+              <IdleState isDragging={isDragging} isError={isError} error={error} />
+            )}
+          </div>
         </div>
       )}
 
@@ -683,34 +722,6 @@ export default function SkillGraphUpload({ onGraphReady }) {
           onExplore={handleExplore}
           onReset={handleReset}
         />
-      )}
-
-      {/* ── Format Guide ── */}
-      {phase === "idle" && (
-        <>
-          {/* Try Example Button */}
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", margin: "0 0 12px" }}>
-              Don't have markdown files? Try a pre-built example:
-            </p>
-            <button
-              onClick={handleTryExample}
-              style={{
-                padding: "10px 24px", borderRadius: 8,
-                border: "1px solid rgba(238,90,36,0.3)",
-                background: "rgba(238,90,36,0.08)",
-                color: "#EE5A24", fontSize: 13, fontWeight: 600,
-                cursor: "pointer", fontFamily: "'Outfit', sans-serif",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(238,90,36,0.15)"; e.currentTarget.style.borderColor = "rgba(238,90,36,0.5)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(238,90,36,0.08)"; e.currentTarget.style.borderColor = "rgba(238,90,36,0.3)"; }}
-            >
-              🧠 Try Example: Therapy & CBT Knowledge Graph
-            </button>
-          </div>
-          <FormatGuide />
-        </>
       )}
     </div>
   );
