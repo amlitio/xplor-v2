@@ -574,6 +574,14 @@ Be analytical, specific, and data-driven. Reference actual entities and relation
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         {/* Top Bar */}
         <div style={{ padding: "10px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+          <button onClick={onBack} style={{
+            padding: "6px 12px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.1)",
+            background: "transparent", color: "rgba(255,255,255,0.4)", fontSize: 11, cursor: "pointer",
+            fontFamily: "inherit", flexShrink: 0, transition: "all 0.2s",
+          }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(78,205,196,0.3)"; e.currentTarget.style.color = "#4ECDC4"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "rgba(255,255,255,0.4)"; }}
+          >← Projects</button>
           <div style={{ position: "relative", flex: 1, maxWidth: 360 }}>
             <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search entities..." style={{
               width: "100%", padding: "8px 12px 8px 32px", borderRadius: 8,
